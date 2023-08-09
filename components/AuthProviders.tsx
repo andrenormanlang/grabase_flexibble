@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { getProviders, signIn } from 'next-auth/react';
 import React, { useEffect, useState } from 'react'
@@ -23,7 +23,7 @@ const AuthProviders = () => {
     useEffect(() => {
         const fetchProviders = async () => {
             const res = await getProviders();
-            console.log(res);
+    
             setProviders(res);
         }
 

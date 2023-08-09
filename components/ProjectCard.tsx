@@ -49,11 +49,11 @@ const ProjectCard = ({ id, image, title, name, avatarUrl, userId }: Props) => {
                                 className="rounded-full"
                                 alt="profile image"
                             />
-                            <p className="flexLeft">{name}</p>
+                            <p>{name}</p>
                         </div>               
                 </Link>
 
-                <div className="flexRight gap-3">
+                <div className="flexCenter gap-3">
                     <div className="flexCenter gap-2">
                         <Image src="/hearth.svg" width={13} height={12} alt="heart" />
                         <p className="text-sm">{randomLikes}</p>
