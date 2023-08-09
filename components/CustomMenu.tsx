@@ -11,7 +11,8 @@ type Props = {
     setState: (value: string) => void;
 }
 
-const CustomMenu = ({ title, state, filters, setState }: Props) => (
+const CustomMenu = ({ title, state, filters, setState }: Props) => {
+  return (
     <div className="flexStart flex-col w-full gap-7 relative">
         <label htmlFor={title} className="w-full text-gray-100">{title}</label>
         <Menu as="div" className="self-start relative">
@@ -52,6 +53,7 @@ const CustomMenu = ({ title, state, filters, setState }: Props) => (
             </Transition>
         </Menu>
     </div>
-);
+  )
+}
 
-export default CustomMenu;
+export default CustomMenu

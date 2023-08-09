@@ -27,4 +27,3 @@ const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
 };
 
 export default EditProject;
-

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { NavLinks } from "@/constant";
+import { NavLinks } from "@/constants";
 import { getCurrentUser } from "@/lib/session";
 
 import AuthProviders from "./AuthProviders";
@@ -37,7 +37,8 @@ const Navbar = async () => {
             <ProfileMenu session={session} />
 
             <Link href="/create-project">
-              <Button title='Share work' />
+              <Button title='Share work' /> 
+              {/* Share Work */}
             </Link>
           </>
         ) : (

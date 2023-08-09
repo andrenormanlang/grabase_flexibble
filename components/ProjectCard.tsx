@@ -13,8 +13,8 @@ type Props = {
     userId: string;
 };
 
-
 const ProjectCard = ({ id, image, title, name, avatarUrl, userId }: Props) => {
+
     const [randomLikes, setRandomLikes] = useState(0);
     const [randomViews, setRandomViews] = useState('');
 
@@ -23,9 +23,9 @@ const ProjectCard = ({ id, image, title, name, avatarUrl, userId }: Props) => {
         setRandomViews(String((Math.floor(Math.random() * 10000) / 1000).toFixed(1) + 'k'))
     }, []);
 
-    return (
-        <div className="flexCenter flex-col rounded-2xl drop-shadow-card">
-            <Link href={`/project/${id}`} className="flexCenter group relative w-full h-full">
+  return (
+    <div className="flexCenter flex-col rounded-2xl drop-shadow-card">
+           <Link href={`/project/${id}`} className="flexCenter group relative w-full h-full">
                 <Image
                     src={image}
                     width={414}
@@ -62,10 +62,10 @@ const ProjectCard = ({ id, image, title, name, avatarUrl, userId }: Props) => {
                         <Image src="/eye.svg" width={12} height={9} alt="eye" />
                         <p className="text-sm">{randomViews}</p>
                     </div>
-                </div>
-            </div>
+                </div> 
         </div>
-    );
-};
+    </div>
+  )
+}
 
-export default ProjectCard;
+export default ProjectCard

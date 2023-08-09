@@ -1,5 +1,7 @@
+
+
 import { ProjectForm } from "@/common.types";
-import { categoryFilters } from "@/constant";
+import { categoryFilters } from "@/constants";
 import { createProjectMutation, createUserMutation, deleteProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery, updateProjectMutation } from "@/graphql";
 import { GraphQLClient } from "graphql-request";
 

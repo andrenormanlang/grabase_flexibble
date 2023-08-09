@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { NextAuthOptions, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
-import jsonwebtoken from 'jsonwebtoken'
+import jsonwebtoken from 'jsonwebtoken';
 import { JWT } from "next-auth/jwt";
 
 import { createUser, getUser } from "./actions";
@@ -29,8 +29,9 @@ export const authOptions: NextAuthOptions = {
       return encodedToken;
     },
     decode: async ({ secret, token }) => {
-      const decodedToken = jsonwebtoken.verify(token!, secret);
-      return decodedToken as JWT;
+      const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
+
+      return decodedToken;
     },
   },
   theme: {
@@ -48,13 +49,13 @@ export const authOptions: NextAuthOptions = {
           ...session,
           user: {
             ...session.user,
-            ...data?.user,
-          },
-        };
+            ...data?.user
+          }
+        }
 
         return newSession;
-      } catch (error: any) {
-        console.error("Error retrieving user data: ", error.message);
+      } catch (error) {
+        console.log('Error retrieving user data', error);
         return session;
       }
     },
@@ -70,7 +71,7 @@ export const authOptions: NextAuthOptions = {
 
         return true;
       } catch (error: any) {
-        console.log("Error checking if user exists: ", error.message);
+        console.log(error);
         return false;
       }
     },

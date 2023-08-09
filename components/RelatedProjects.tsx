@@ -13,13 +13,15 @@ const RelatedProjects = async ({ userId, projectId }: Props) => {
     const result = await getUserProjects(userId) as { user?: UserProfile}
 
     const filteredProjects = result?.user?.projects?.edges
-        ?.filter(({ node }: { node: ProjectInterface }) => node?.id !== projectId)
+    ?.filter(({ node }: { node: ProjectInterface }) => node?.id !== projectId)
+
+    console.log(filteredProjects)
 
     if (filteredProjects?.length === 0) return null;
 
-    return (
-        <section className="flex flex-col mt-32 w-full">
-            <div className="flexBetween">
+  return (
+    <section className="flex flex-col mt-32 w-full">
+        <div className="flexBetween">
                 <p className="text-base font-bold">
                     More by {result?.user?.name}
                 </p>
@@ -44,8 +46,8 @@ const RelatedProjects = async ({ userId, projectId }: Props) => {
                     </div>
                 ))}
             </div>
-        </section>
-    )
+    </section>
+  )
 }
 
 export default RelatedProjects

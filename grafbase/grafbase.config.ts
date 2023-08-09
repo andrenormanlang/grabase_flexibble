@@ -40,4 +40,3 @@ export default config({
     rules: (rules) => rules.private()
   },
 })
-
