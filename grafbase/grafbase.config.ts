@@ -1,12 +1,11 @@
-// g is a schema generator, config the final object to return
 import { auth, graph, config } from '@grafbase/sdk'
 
 const g = graph.Standalone()
 
-// Define the User model
-const User = g.type('User', {
-  name: g.string(),
-  email: g.string(),
+// @ts-ignore
+const User = g.model('User', {
+  name: g.string().length({ min:2, max:20}),
+  email: g.string().unique(),
   avatarUrl: g.url(),
   description: g.string().optional(),
   githubUrl: g.url().optional(),
@@ -29,10 +28,9 @@ const Project = g.type('Project', {
 // Define JWT authentication
 const jwt = auth.JWT({
   issuer: 'grafbase',
-  secret: g.env('NEXTAUTH_SECRET')
+  secret:  g.env('NEXTAUTH_SECRET')
 })
 
-// Export the configuration
 export default config({
   graph: g,
   auth: {
