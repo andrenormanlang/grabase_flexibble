@@ -1,44 +1,35 @@
+// g is a schema generator, config the final object to return
 import { auth, graph, config } from '@grafbase/sdk'
 
 const g = graph.Standalone()
 
-// @ts-ignore
-const User = g.model('User', {
-  name: g.string().length({ min:2, max:20}),
-  email: g.string().unique(),
+// Define the User model
+const User = g.type('User', {
+  name: g.string(),
+  email: g.string(),
   avatarUrl: g.url(),
   description: g.string().optional(),
   githubUrl: g.url().optional(),
   linkedinUrl: g.url().optional(),
-  // @ts-ignore
-  projects: g.relation(() => Project).list().optional(),
-  // @ts-ignore
-}).auth((rules) => {
-  rules.public().read()
 })
 
-// @ts-ignore
-const Project = g.model('Project', {
-  title: g.string().length({ min: 3 }),
+// Define the Project model
+const Project = g.type('Project', {
+  title: g.string(),
   description: g.string(),
   image: g.url(),
   liveSiteUrl: g.url(),
   githubUrl: g.url(),
-  // @ts-ignore
-  category: g.string().search(),
-  // @ts-ignore
-  createdBy: g.relation(() => User),
-  // @ts-ignore
-}).auth((rules) => {
-  rules.public().read()
-  rules.private().create().delete().update()
+  category: g.string(),
 })
 
+// Define JWT authentication
 const jwt = auth.JWT({
   issuer: 'grafbase',
-  secret:  g.env('NEXTAUTH_SECRET')
+  secret: g.env('NEXTAUTH_SECRET')
 })
 
+// Export the configuration
 export default config({
   graph: g,
   auth: {
