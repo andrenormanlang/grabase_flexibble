@@ -12,7 +12,7 @@ const User = g.type('User', {
   githubUrl: g.url().optional(),
   linkedinUrl: g.url().optional(),
   // Define the projects field
-  projects: g.ref('Project'),
+  projects: g.ref('Project').list().optional(),
 })
 
 // Define the Project model
@@ -23,7 +23,7 @@ const Project = g.type('Project', {
   liveSiteUrl: g.url(),
   githubUrl: g.url(),
   category: g.string(),
-  user: g.ref('User'),
+  createdBy: g.ref('User'),
 })
 
 // Define JWT authentication
