@@ -1,8 +1,10 @@
+// lib/session.ts
+
 import { getServerSession } from "next-auth/next";
 import { NextAuthOptions, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
-import jsonwebtoken from 'jsonwebtoken';
+import jsonwebtoken from "jsonwebtoken";
 import { JWT } from "next-auth/jwt";
 
 import { createUser, getUser } from "./actions";
@@ -20,12 +22,17 @@ export const authOptions: NextAuthOptions = {
       const encodedToken = jsonwebtoken.sign(
         {
           ...token,
-          iss: "grafbase",
+          iss: "hasura",
           exp: Math.floor(Date.now() / 1000) + 60 * 60,
+          "https://hasura.io/jwt/claims": {
+            "x-hasura-allowed-roles": ["user"],
+            "x-hasura-default-role": "user",
+            "x-hasura-user-id": token!.sub,
+          },
         },
         secret
       );
-      
+
       return encodedToken;
     },
     decode: async ({ secret, token }) => {
@@ -42,31 +49,29 @@ export const authOptions: NextAuthOptions = {
     async session({ session }) {
       const email = session?.user?.email as string;
 
-      try { 
-        const data = await getUser(email) as { user?: UserProfile }
+      try {
+        const data = await getUser(email) as { user?: UserProfile };
 
         const newSession = {
           ...session,
           user: {
             ...session.user,
-            ...data?.user
-          }
-        }
+            ...data?.user,
+          },
+        };
 
         return newSession;
       } catch (error) {
-        console.log('Error retrieving user data', error);
+        console.log("Error retrieving user data", error);
         return session;
       }
     },
-    async signIn({ user }: {
-      user: AdapterUser | User
-    }) {
+    async signIn({ user }: { user: AdapterUser | User }) {
       try {
-        const userExists = await getUser(user?.email as string) as { user?: UserProfile }
-        
+        const userExists = await getUser(user?.email as string) as { user?: UserProfile };
+
         if (!userExists.user) {
-          await createUser(user.name as string, user.email as string, user.image as string)
+          await createUser(user.name as string, user.email as string, user.image as string);
         }
 
         return true;

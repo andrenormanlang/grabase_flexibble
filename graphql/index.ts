@@ -1,94 +1,77 @@
-
+// graphql/index.ts
 
 export const createProjectMutation = `
-	mutation CreateProject($input: ProjectCreateInput!) {
-		projectCreate(input: $input) {
-			project {
-				id
-				title
-				description
-				createdBy {
-					email
-					name
-				}
-			}
-		}
-	}
-`;
-
-export const updateProjectMutation = `
-	mutation UpdateProject($id: ID!, $input: ProjectUpdateInput!) {
-		projectUpdate(by: { id: $id }, input: $input) {
-			project {
-				id
-				title
-				description
-				createdBy {
-					email
-					name
-				}
-			}
-		}
-	}
-`;
-
-export const deleteProjectMutation = `
-  mutation DeleteProject($id: ID!) {
-    projectDelete(by: { id: $id }) {
-      deletedId
+  mutation CreateProject($input: projects_insert_input!) {
+    insert_projects_one(object: $input) {
+      id
+      title
+      description
+      user {
+        email
+        name
+      }
     }
   }
 `;
-      
-export const createUserMutation = `
-	mutation CreateUser($input: UserCreateInput!) {
-		userCreate(input: $input) {
-			user {
-				name
-				email
-				avatarUrl
-				description
-				githubUrl
-				linkedinUrl
-				id
-			}
-		}
-	}
+
+export const updateProjectMutation = `
+  mutation UpdateProject($id: uuid!, $input: projects_set_input!) {
+    update_projects_by_pk(pk_columns: { id: $id }, _set: $input) {
+      id
+      title
+      description
+      user {
+        email
+        name
+      }
+    }
+  }
 `;
 
+export const deleteProjectMutation = `
+  mutation DeleteProject($id: uuid!) {
+    delete_projects_by_pk(id: $id) {
+      id
+    }
+  }
+`;
+
+export const createUserMutation = `
+  mutation CreateUser($input: users_insert_input!) {
+    insert_users_one(object: $input) {
+      id
+      name
+      email
+      avatarUrl
+      description
+      githubUrl
+      linkedinUrl
+    }
+  }
+`;
 export const projectsQuery = `
-  query getProjects($categories: [String!], $endcursor: String) {
-    projectSearch(first: 16, after: $endcursor, filter:  {category: {in: $categories}}) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
-      }
-      edges {
-        node {
-          title
-          githubUrl
-          description
-          liveSiteUrl
-          id
-          image
-          category
-          createdBy {
-            id
-            email
-            name
-            avatarUrl
-          }
-        }
+  query getProjects($categories: [String!], $endcursor: Int) {
+    projects(where: { category: { _in: $categories } }, limit: 16, offset: $endcursor) {
+      id
+      title
+      githubUrl
+      description
+      liveSiteUrl
+      image
+      category
+      user {
+        id
+        email
+        name
+        avatarUrl
       }
     }
   }
 `;
 
 export const getProjectByIdQuery = `
-  query GetProjectById($id: ID!) {
-    project(by: { id: $id }) {
+  query GetProjectById($id: uuid!) {
+    projects_by_pk(id: $id) {
       id
       title
       description
@@ -96,7 +79,7 @@ export const getProjectByIdQuery = `
       liveSiteUrl
       githubUrl
       category
-      createdBy {
+      user {
         id
         name
         email
@@ -108,7 +91,7 @@ export const getProjectByIdQuery = `
 
 export const getUserQuery = `
   query GetUser($email: String!) {
-    user(by: { email: $email }) {
+    users(where: { email: { _eq: $email } }) {
       id
       name
       email
@@ -119,10 +102,10 @@ export const getUserQuery = `
     }
   }
 `;
-      
+
 export const getProjectsOfUserQuery = `
-  query getUserProjects($id: ID!, $last: Int = 4) {
-    user(by: { id: $id }) {
+  query getUserProjects($id: uuid!, $last: Int = 4) {
+    users_by_pk(id: $id) {
       id
       name
       email
@@ -130,14 +113,10 @@ export const getProjectsOfUserQuery = `
       avatarUrl
       githubUrl
       linkedinUrl
-      projects(last: $last) {
-        edges {
-          node {
-            id
-            title
-            image
-          }
-        }
+      projects(limit: $last) {
+        id
+        title
+        image
       }
     }
   }
