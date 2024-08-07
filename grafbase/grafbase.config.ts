@@ -1,4 +1,6 @@
-import { g, auth, config } from '@grafbase/sdk'
+import { auth, graph, config } from '@grafbase/sdk'
+
+const g = graph.Standalone()
 
 // @ts-ignore
 const User = g.model('User', {
@@ -10,6 +12,7 @@ const User = g.model('User', {
   linkedinUrl: g.url().optional(),
   // @ts-ignore
   projects: g.relation(() => Project).list().optional(),
+  // @ts-ignore
 }).auth((rules) => {
   rules.public().read()
 })
@@ -21,9 +24,11 @@ const Project = g.model('Project', {
   image: g.url(),
   liveSiteUrl: g.url(),
   githubUrl: g.url(),
+  // @ts-ignore
   category: g.string().search(),
   // @ts-ignore
   createdBy: g.relation(() => User),
+  // @ts-ignore
 }).auth((rules) => {
   rules.public().read()
   rules.private().create().delete().update()
