@@ -1,11 +1,14 @@
-import { auth, graph, config } from '@grafbase/sdk'
+import { auth, connector, graph, config } from '@grafbase/sdk'
 
 const g = graph.Standalone()
 
-// @ts-ignore
-const User = g.model('User', {
-  name: g.string().length({ min:2, max:20}),
-  email: g.string().unique(),
+const pg = connector.Postgres('Postgres', {
+  url: g.env('DATABASE_URL'),
+})
+
+const User = g.type('User', {
+  name: g.string(),
+  email: g.string(),
   avatarUrl: g.url(),
   description: g.string().optional(),
   githubUrl: g.url().optional(),
@@ -30,6 +33,8 @@ const jwt = auth.JWT({
   issuer: 'grafbase',
   secret:  g.env('NEXTAUTH_SECRET')
 })
+
+g.datasource(pg)
 
 export default config({
   graph: g,
