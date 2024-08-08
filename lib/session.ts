@@ -17,7 +17,7 @@ export const authOptions: NextAuthOptions = {
   ],
   jwt: {
     encode: ({ secret, token }) => {
-      console.log("Encoding JWT token:", token);
+
       const encodedToken = jsonwebtoken.sign(
         {
           ...token,
@@ -32,13 +32,13 @@ export const authOptions: NextAuthOptions = {
         secret
       );
 
-      console.log("Encoded JWT token:", encodedToken);
+ 
       return encodedToken;
     },
     decode: async ({ secret, token }) => {
-      console.log("Decoding JWT token:", token);
+
       const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
-      console.log("Decoded JWT token:", decodedToken);
+   
       return decodedToken;
     },
   },
@@ -49,11 +49,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session }) {
       const email = session?.user?.email as string;
-      console.log("Session callback - email:", email);
+      
 
       try {
         const data = await getUser(email) as { user?: UserProfile };
-        console.log("Session callback - user data:", data);
+       
 
         const newSession = {
           ...session,
@@ -71,11 +71,11 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }: { user: AdapterUser | User }) {
       const email = user?.email;
-      console.log("SignIn callback - user email:", email);
+
 
       try {
         const userExists = await getUser(email as string) as { users: UserProfile[] };
-        console.log("SignIn callback - user exists:", userExists);
+
 
         if (userExists.users.length === 0) {
           console.log("User does not exist. Creating new user.");
@@ -95,6 +95,6 @@ export const authOptions: NextAuthOptions = {
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions) as SessionInterface;
-  console.log("getCurrentUser - session:", session);
+  
   return session;
 }

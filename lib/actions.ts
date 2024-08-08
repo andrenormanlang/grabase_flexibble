@@ -1,18 +1,27 @@
 import { ProjectForm } from "@/common.types";
 import { categoryFilters } from "@/constants";
-import { createProjectMutation, createUserMutation, deleteProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery, updateProjectMutation } from "@/graphql";
+import {
+  createProjectMutation,
+  createUserMutation,
+  deleteProjectMutation,
+  getProjectByIdQuery,
+  getProjectsOfUserQuery,
+  getUserQuery,
+  projectsQuery,
+  updateProjectMutation,
+} from "@/graphql";
 import { GraphQLClient } from "graphql-request";
 
-const isProduction = process.env.NODE_ENV === 'production';
-const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : 'http://localhost:3000';
+const isProduction = process.env.NODE_ENV === "production";
+const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : "http://localhost:3000";
 
-const apiUrl = 'https://flexibble.hasura.app/v1/graphql';
-const adminSecret = process.env.HASURA_ADMIN_SECRET || '';
+const apiUrl = "https://flexibble.hasura.app/v1/graphql";
+const adminSecret = process.env.HASURA_ADMIN_SECRET || "";
 
 const client = new GraphQLClient(apiUrl, {
   headers: {
-    'content-type': 'application/json',
-    'x-hasura-admin-secret': adminSecret,
+    "content-type": "application/json",
+    "x-hasura-admin-secret": adminSecret,
   },
 });
 
@@ -63,8 +72,6 @@ export const uploadImage = async (imagePath: string) => {
   }
 };
 
-
-
 export const createNewProject = async (form: ProjectForm, creatorId: string) => {
   const imageUrl = await uploadImage(form.image);
 
@@ -85,15 +92,11 @@ export const createNewProject = async (form: ProjectForm, creatorId: string) => 
   }
 };
 
-
 export const fetchAllProjects = async (category?: string | null, endcursor?: number | null) => {
   const categories = category == null ? categoryFilters : [category];
   const variables = { categories, endcursor };
   return makeGraphQLRequest(projectsQuery, variables);
 };
-
-
-
 
 export const deleteProject = (id: string, token: string) => {
   return makeGraphQLRequest(deleteProjectMutation, { id });
@@ -123,4 +126,12 @@ export const updateProject = async (form: ProjectForm, projectId: string, token:
   };
 
   return makeGraphQLRequest(updateProjectMutation, variables);
+};
+
+export const getProjectDetails = async (id: string) => {
+  return makeGraphQLRequest(getProjectByIdQuery, { id });
+};
+
+export const getUserProjects = async (id: string, last?: number) => {
+  return makeGraphQLRequest(getProjectsOfUserQuery, { id, last });
 };

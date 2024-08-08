@@ -27,10 +27,9 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
   const endCursorNumber = endcursor ? parseInt(endcursor, 10) : null;
   const data = await fetchAllProjects(category, endCursorNumber) as ProjectSearch;
   
-  console.log("Projects data:", data);
 
   const projectsToDisplay = data?.projects || [];
-  console.log("Projects to display:", projectsToDisplay);
+
 
   if (projectsToDisplay.length === 0) {
     return (

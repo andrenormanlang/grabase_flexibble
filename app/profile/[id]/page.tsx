@@ -8,7 +8,6 @@ type Props = {
   };
 };
 
-import { User, Session } from 'next-auth';
 
 type ProjectInterface = {
   title: string;

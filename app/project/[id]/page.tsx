@@ -9,16 +9,20 @@ import { ProjectInterface } from "@/common.types"
 import ProjectActions from "@/components/ProjectActions"
 
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
-    const session = await getCurrentUser()
-    const result = await getProjectDetails(id) as { project?: ProjectInterface}
+    const session = await getCurrentUser();
 
-    if (!result?.project) return (
-        <p className="no-result-text">Failed to fetch project info</p>
-    )
+    const result = await getProjectDetails(id) as { projects_by_pk?: ProjectInterface };
 
-    const projectDetails = result?.project
+    const projectDetails = result?.projects_by_pk;
 
-    const renderLink = () => `/profile/${projectDetails?.user?.id}`
+    if (!projectDetails) {
+        console.error("Failed to fetch project info for project ID:", id);
+        return (
+            <p className="no-result-text">Failed to fetch project info</p>
+        );
+    }
+
+    const renderLink = () => `/profile/${projectDetails?.user?.id}`;
 
     return (
         <Modal>
@@ -103,3 +107,4 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
 }
 
 export default Project
+
