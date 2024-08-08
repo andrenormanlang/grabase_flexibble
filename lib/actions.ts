@@ -1,5 +1,3 @@
-
-
 import { ProjectForm } from "@/common.types";
 import { categoryFilters } from "@/constants";
 import { createProjectMutation, createUserMutation, deleteProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery, updateProjectMutation } from "@/graphql";
@@ -10,7 +8,6 @@ const apiUrl = process.env.NEXT_PUBLIC_HASURA_API_URL!;
 const adminSecret = process.env.HASURA_ADMIN_SECRET!;
 const apiKey = isProduction ? process.env.NEXT_PUBLIC_GRAFBASE_API_KEY || '' : 'letmein';
 const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : 'http://localhost:3000';
-
 
 const client = new GraphQLClient(apiUrl, {
   headers: {
@@ -83,12 +80,10 @@ export const createNewProject = async (form: ProjectForm, creatorId: string, tok
   }
 };
 
-export const fetchAllProjects = (category?: string | null, endcursor?: number | null) => {
-  client.setHeader("x-api-key", apiKey);
-
+export const fetchAllProjects = async (category?: string | null, endcursor?: number | null) => {
   const categories = category == null ? categoryFilters : [category];
-
-  return makeGraphQLRequest(projectsQuery, { categories, endcursor });
+  const variables = { categories, endcursor };
+  return makeGraphQLRequest(projectsQuery, variables);
 };
 
 export const getProjectDetails = (id: string) => {

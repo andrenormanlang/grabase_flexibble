@@ -18,7 +18,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
 
     const projectDetails = result?.project
 
-    const renderLink = () => `/profile/${projectDetails?.createdBy?.id}`
+    const renderLink = () => `/profile/${projectDetails?.user?.id}`
 
     return (
         <Modal>
@@ -26,7 +26,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 <div className="flex-1 flex items-start gap-5 w-full max-xs:flex-col">
                     <Link href={renderLink()}>
                         <Image
-                            src={projectDetails?.createdBy?.avatarUrl}
+                            src={projectDetails?.user?.avatarUrl}
                             width={50}
                             height={50}
                             alt="profile"
@@ -40,7 +40,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                         </p>
                         <div className="user-info">
                             <Link href={renderLink()}>
-                                {projectDetails?.createdBy?.name}
+                                {projectDetails?.user?.name}
                             </Link>
                             <Image src="/dot.svg" width={4} height={4} alt="dot" />
                             <Link href={`/?category=${projectDetails.category}`} className="text-primary-purple font-semibold"> 
@@ -50,7 +50,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                     </div>
                 </div>
 
-                {session?.user?.email === projectDetails?.createdBy?.email && (
+                {session?.user?.email === projectDetails?.user?.email && (
                     <div className="flex justify-end items-center gap-2">
                         <ProjectActions projectId={projectDetails?.id} />
                     </div>
@@ -87,7 +87,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 <span className="w-full h-0.5 bg-light-white-200" />
                 <Link href={renderLink()} className="min-w-[82px] h-[82px]">
                     <Image
-                        src={projectDetails?.createdBy?.avatarUrl}
+                        src={projectDetails?.user?.avatarUrl}
                         className="rounded-full"
                         width={82}
                         height={82}
@@ -97,7 +97,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 <span className="w-full h-0.5 bg-light-white-200" />
             </section>
 
-            <RelatedProjects userId={projectDetails?.createdBy?.id} projectId={projectDetails?.id} />
+            <RelatedProjects userId={projectDetails?.user?.id} projectId={projectDetails?.id} />
         </Modal>
     )
 }

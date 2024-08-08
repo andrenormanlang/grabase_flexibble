@@ -1,5 +1,3 @@
-// graphql/index.ts
-
 export const createProjectMutation = `
   mutation CreateProject($input: projects_insert_input!) {
     insert_projects_one(object: $input) {
