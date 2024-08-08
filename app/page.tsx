@@ -12,7 +12,7 @@ type ProjectSearch = {
 
 type SearchParams = {
   category?: string;
-  endcursor?: string; // Ensure this matches the query parameter name exactly
+  endcursor?: string;
 }
 
 type Props = {
@@ -27,15 +27,12 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
   const endCursorNumber = endcursor ? parseInt(endcursor, 10) : null;
   const data = await fetchAllProjects(category, endCursorNumber) as ProjectSearch;
   
-
   const projectsToDisplay = data?.projects || [];
-
 
   if (projectsToDisplay.length === 0) {
     return (
       <section className="flexStart flex-col paddings">
         <Categories />
-
         <p className="no-result-text text-center">No projects found, go create some first.</p>
       </section>
     )
@@ -60,8 +57,8 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
       </section>
 
       <LoadMore 
-        startCursor={null} 
-        endCursor={endcursor ? endcursor.toString() : null} 
+        startCursor={endCursorNumber !== null ? endCursorNumber.toString() : ''} 
+        endCursor={endcursor ? endcursor.toString() : ''} 
         hasPreviousPage={false} 
         hasNextPage={true}
       />
@@ -70,4 +67,3 @@ const Home = async ({ searchParams: { category, endcursor } }: Props) => {
 }
 
 export default Home;
-

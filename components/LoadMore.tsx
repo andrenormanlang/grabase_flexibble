@@ -1,14 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
 import Button from "./Button";
 
 type Props = {
-    startCursor: string
-    endCursor: string
-    hasPreviousPage: boolean
-    hasNextPage: boolean
+    startCursor: string;
+    endCursor: string;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
 }
 
 const LoadMore = ({ startCursor, endCursor, hasPreviousPage, hasNextPage }: Props) => {
@@ -18,11 +17,11 @@ const LoadMore = ({ startCursor, endCursor, hasPreviousPage, hasNextPage }: Prop
         const currentParams = new URLSearchParams(window.location.search);
         
         if (type === "prev" && hasPreviousPage) {
-            currentParams.delete("");
             currentParams.set("startcursor", startCursor);
+            currentParams.delete("endcursor");
         } else if (type === "next" && hasNextPage) {
+            currentParams.set("endcursor", endCursor);
             currentParams.delete("startcursor");
-            currentParams.set("endCursor", endCursor);
         }
     
         const newSearchParams = currentParams.toString();
