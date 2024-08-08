@@ -16,7 +16,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : "http://localhost:3000";
 
 const apiUrl = "https://flexibble.hasura.app/v1/graphql";
-const adminSecret = process.env.HASURA_ADMIN_SECRET || "";
+const adminSecret = process.env.NEXT_PUBLIC_HASURA_ADMIN_SECRET || "";
 
 const client = new GraphQLClient(apiUrl, {
   headers: {
@@ -129,7 +129,37 @@ export const updateProject = async (form: ProjectForm, projectId: string, token:
 };
 
 export const getProjectDetails = async (id: string) => {
-  return makeGraphQLRequest(getProjectByIdQuery, { id });
+  console.log("Fetching project details for ID:", id);
+  const query = `
+    query GetProjectById($id: uuid!) {
+      projects_by_pk(id: $id) {
+        id
+        title
+        description
+        image
+        liveSiteUrl
+        githubUrl
+        category
+        user {
+          id
+          name
+          email
+          avatarUrl
+        }
+      }
+    }
+  `;
+
+  const variables = { id };
+
+  try {
+    const data = await makeGraphQLRequest(query, variables);
+    console.log("Fetched project details:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching project details:", error);
+    throw error;
+  }
 };
 
 export const getUserProjects = async (id: string, last?: number) => {
