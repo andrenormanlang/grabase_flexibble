@@ -1,9 +1,11 @@
-// g is a schema generator, config the final object to return
-import { auth, graph, config } from '@grafbase/sdk'
+import { auth, connector, graph, config } from '@grafbase/sdk'
 
 const g = graph.Standalone()
 
-// Define the User model
+const pg = connector.Postgres('Postgres', {
+  url: g.env('DATABASE_URL'),
+})
+
 const User = g.type('User', {
   name: g.string(),
   email: g.string(),
@@ -29,10 +31,11 @@ const Project = g.type('Project', {
 // Define JWT authentication
 const jwt = auth.JWT({
   issuer: 'grafbase',
-  secret: g.env('NEXTAUTH_SECRET')
+  secret:  g.env('NEXTAUTH_SECRET')
 })
 
-// Export the configuration
+g.datasource(pg)
+
 export default config({
   graph: g,
   auth: {
