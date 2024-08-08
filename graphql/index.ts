@@ -1,15 +1,21 @@
 export const createProjectMutation = `
   mutation CreateProject($input: projects_insert_input!) {
-    insert_projects_one(object: $input) {
+  insert_projects_one(object: $input) {
+    id
+    title
+    description
+    image
+    liveSiteUrl
+    githubUrl
+    category
+    user {
       id
-      title
-      description
-      user {
-        email
-        name
-      }
+      name
+      email
+      avatarUrl
     }
   }
+}
 `;
 
 export const updateProjectMutation = `
@@ -47,25 +53,29 @@ export const createUserMutation = `
     }
   }
 `;
+
 export const projectsQuery = `
-  query getProjects($categories: [String!], $endcursor: Int) {
-    projects(where: { category: { _in: $categories } }, limit: 16, offset: $endcursor) {
+ query getProjects($categories: [String!], $endcursor: Int) {
+  projects(where: {category: {_in: $categories}}, limit: 16, offset: $endcursor) {
+    id
+    title
+    description
+    image
+    liveSiteUrl
+    githubUrl
+    category
+    user {
       id
-      title
-      githubUrl
-      description
-      liveSiteUrl
-      image
-      category
-      user {
-        id
-        email
-        name
-        avatarUrl
-      }
+      name
+      avatarUrl
     }
   }
+}
+
+
+
 `;
+
 
 export const getProjectByIdQuery = `
   query GetProjectById($id: uuid!) {

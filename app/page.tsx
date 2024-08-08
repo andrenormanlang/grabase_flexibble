@@ -7,24 +7,16 @@ import ProjectCard from "@/components/ProjectCard";
 import { fetchAllProjects } from "@/lib/actions";
 
 type ProjectSearch = {
-    projectSearch: {
-        edges: { node: ProjectInterface } [];
-        pageInfo: {
-            hasPreviousPage: boolean;
-            hasNextPage: boolean;
-            startCursor: string;
-            endCursor: string;
-        }
-    }
+  projects: ProjectInterface[];
 }
 
 type SearchParams = {
-    category?: string;
-    endcursor?: string; // Ensure this matches the query parameter name exactly
+  category?: string;
+  endcursor?: string; // Ensure this matches the query parameter name exactly
 }
 
 type Props = {
-    searchParams: SearchParams
+  searchParams: SearchParams
 }
 
 export const dynamic = 'force-dynamic';
@@ -32,47 +24,51 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 const Home = async ({ searchParams: { category, endcursor } }: Props) => {
-    const endCursorNumber = endcursor ? parseInt(endcursor, 10) : null;
-    const data = await fetchAllProjects(category, endCursorNumber) as ProjectSearch;
+  const endCursorNumber = endcursor ? parseInt(endcursor, 10) : null;
+  const data = await fetchAllProjects(category, endCursorNumber) as ProjectSearch;
   
-    const projectsToDisplay = data?.projectSearch?.edges || [];
-  
-    if (projectsToDisplay.length === 0) {
-      return (
-        <section className="flexStart flex-col paddings">
-          <Categories />
-  
-          <p className="no-result-text text-center">No projects found, go create some first.</p>
-        </section>
-      )
-    }
-  
+  console.log("Projects data:", data);
+
+  const projectsToDisplay = data?.projects || [];
+  console.log("Projects to display:", projectsToDisplay);
+
+  if (projectsToDisplay.length === 0) {
     return (
-      <section className="flexStart flex-col paddings mb-16">
+      <section className="flexStart flex-col paddings">
         <Categories />
-  
-        <section className="projects-grid">
-          {projectsToDisplay.map(({ node }: { node: ProjectInterface }) => (
-            <ProjectCard 
-              key={node?.id}
-              id={node?.id}
-              image={node?.image}
-              title={node?.title}
-              name={node?.user.name}
-              avatarUrl={node?.user.avatarUrl}
-              userId={node?.user.id}  
-            />
-          ))}
-        </section>
-  
-        <LoadMore 
-          startCursor={data?.projectSearch?.pageInfo?.startCursor} 
-          endCursor={data?.projectSearch?.pageInfo?.endCursor} 
-          hasPreviousPage={data?.projectSearch?.pageInfo?.hasPreviousPage} 
-          hasNextPage={data?.projectSearch?.pageInfo.hasNextPage}
-        />
+
+        <p className="no-result-text text-center">No projects found, go create some first.</p>
       </section>
     )
   }
-  
-  export default Home;
+
+  return (
+    <section className="flexStart flex-col paddings mb-16">
+      <Categories />
+
+      <section className="projects-grid">
+        {projectsToDisplay.map((project: ProjectInterface) => (
+          <ProjectCard 
+            key={project.id}
+            id={project.id}
+            image={project.image}
+            title={project.title}
+            name={project.user.name}
+            avatarUrl={project.user.avatarUrl}
+            userId={project.user.id}  
+          />
+        ))}
+      </section>
+
+      <LoadMore 
+        startCursor={null} 
+        endCursor={endcursor ? endcursor.toString() : null} 
+        hasPreviousPage={false} 
+        hasNextPage={true}
+      />
+    </section>
+  )
+}
+
+export default Home;
+

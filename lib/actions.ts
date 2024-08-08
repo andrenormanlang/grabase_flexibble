@@ -4,14 +4,15 @@ import { createProjectMutation, createUserMutation, deleteProjectMutation, getPr
 import { GraphQLClient } from "graphql-request";
 
 const isProduction = process.env.NODE_ENV === 'production';
-const apiUrl = process.env.NEXT_PUBLIC_HASURA_API_URL!;
-const adminSecret = process.env.HASURA_ADMIN_SECRET!;
-const apiKey = isProduction ? process.env.NEXT_PUBLIC_GRAFBASE_API_KEY || '' : 'letmein';
 const serverUrl = isProduction ? process.env.NEXT_PUBLIC_SERVER_URL : 'http://localhost:3000';
+
+const apiUrl = 'https://flexibble.hasura.app/v1/graphql';
+const adminSecret = process.env.HASURA_ADMIN_SECRET || '';
 
 const client = new GraphQLClient(apiUrl, {
   headers: {
-    "x-hasura-admin-secret": adminSecret,
+    'content-type': 'application/json',
+    'x-hasura-admin-secret': adminSecret,
   },
 });
 
@@ -62,7 +63,9 @@ export const uploadImage = async (imagePath: string) => {
   }
 };
 
-export const createNewProject = async (form: ProjectForm, creatorId: string, token: string) => {
+
+
+export const createNewProject = async (form: ProjectForm, creatorId: string) => {
   const imageUrl = await uploadImage(form.image);
 
   if (imageUrl.url) {
@@ -70,15 +73,18 @@ export const createNewProject = async (form: ProjectForm, creatorId: string, tok
       input: {
         ...form,
         image: imageUrl.url,
-        createdBy: {
-          id: creatorId,
-        },
+        user_id: creatorId,
       },
     };
 
-    return makeGraphQLRequest(createProjectMutation, variables);
+    try {
+      return await client.request(createProjectMutation, variables);
+    } catch (error) {
+      console.error(error);
+    }
   }
 };
+
 
 export const fetchAllProjects = async (category?: string | null, endcursor?: number | null) => {
   const categories = category == null ? categoryFilters : [category];
@@ -86,13 +92,8 @@ export const fetchAllProjects = async (category?: string | null, endcursor?: num
   return makeGraphQLRequest(projectsQuery, variables);
 };
 
-export const getProjectDetails = (id: string) => {
-  return makeGraphQLRequest(getProjectByIdQuery, { id });
-};
 
-export const getUserProjects = (id: string, last?: number) => {
-  return makeGraphQLRequest(getProjectsOfUserQuery, { id, last });
-};
+
 
 export const deleteProject = (id: string, token: string) => {
   return makeGraphQLRequest(deleteProjectMutation, { id });
