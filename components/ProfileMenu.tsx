@@ -1,15 +1,19 @@
-"use client"
+'use client';
 
 import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
 import { SessionInterface } from "@/common.types";
 
 const ProfileMenu = ({ session }: { session: SessionInterface }) => {
     const [openModal, setOpenModal] = useState(false);
+
+    useEffect(() => {
+        console.log("ProfileMenu - session:", session);
+    }, [session]);
 
     return (
         <div className="flexCenter z-10 flex-col relative">
@@ -79,4 +83,4 @@ const ProfileMenu = ({ session }: { session: SessionInterface }) => {
     )
 }
 
-export default ProfileMenu
+export default ProfileMenu;

@@ -17,7 +17,6 @@ export const authOptions: NextAuthOptions = {
   ],
   jwt: {
     encode: ({ secret, token }) => {
-
       const encodedToken = jsonwebtoken.sign(
         {
           ...token,
@@ -31,38 +30,28 @@ export const authOptions: NextAuthOptions = {
         },
         secret
       );
-
- 
       return encodedToken;
     },
     decode: async ({ secret, token }) => {
-
       const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
-   
       return decodedToken;
     },
   },
-  theme: {
-    colorScheme: "light",
-    logo: "/logo.svg",
-  },
   callbacks: {
-    async session({ session }) {
+    async session({ session, token }) {
       const email = session?.user?.email as string;
-      
-
       try {
-        const data = await getUser(email) as { user?: UserProfile };
-       
+        const data = await getUser(email) as { users: UserProfile[] };
+        const user = data?.users[0];
 
         const newSession = {
           ...session,
           user: {
             ...session.user,
-            ...data?.user,
+            ...user,
+            id: user.id, // Ensure the ID is added to the session
           },
         };
-
         return newSession;
       } catch (error) {
         console.log("Error retrieving user data:", error);
@@ -71,19 +60,11 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }: { user: AdapterUser | User }) {
       const email = user?.email;
-
-
       try {
         const userExists = await getUser(email as string) as { users: UserProfile[] };
-
-
         if (userExists.users.length === 0) {
-          console.log("User does not exist. Creating new user.");
           await createUser(user.name as string, email as string, user.image as string);
-        } else {
-          console.log("User already exists.");
         }
-
         return true;
       } catch (error: any) {
         console.log("Error in signIn callback:", error);
@@ -95,6 +76,5 @@ export const authOptions: NextAuthOptions = {
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions) as SessionInterface;
-  
   return session;
 }

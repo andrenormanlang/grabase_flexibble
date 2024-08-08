@@ -1,13 +1,11 @@
 import { getUserProjects } from '@/lib/actions';
 import ProfilePage from '@/components/ProfilePage';
 
-
 type Props = {
   params: {
     id: string;
   };
 };
-
 
 type ProjectInterface = {
   title: string;
@@ -33,25 +31,24 @@ type UserProfile = {
   avatarUrl: string;
   githubUrl: string | null;
   linkedinUrl: string | null;
-  projects: {
-    edges: { node: ProjectInterface }[];
-    pageInfo: {
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      startCursor: string;
-      endCursor: string;
-    };
-  };
+  projects: ProjectInterface[];
 }
 
 const UserProfile = async ({ params }: Props) => {
-  const result = await getUserProjects(params.id, 100) as { user: UserProfile };
+  console.log("UserProfile component - params:", params);
 
-  if (!result?.user) return (
-    <p className="no-result-text">Failed to fetch user info</p>
-  );
+  const result = await getUserProjects(params.id, 100) as { users_by_pk?: UserProfile };
 
-  return <ProfilePage user={result?.user} />;
+  console.log("UserProfile component - fetched user projects:", result);
+
+  if (!result?.users_by_pk) {
+    console.error("UserProfile component - Error: Failed to fetch user info");
+    return (
+      <p className="no-result-text">Failed to fetch user info</p>
+    );
+  }
+
+  return <ProfilePage user={result.users_by_pk} />;
 };
 
 export default UserProfile;
